@@ -25,7 +25,21 @@ async function findUserByUsername(username) {
   }
 }
 
+async function findUserById(id) {
+  const query = "SELECT * FROM users WHERE id = $1";
+  const values = [id];
+
+  try {
+    const result = await pool.query(query, values);
+    return result.rows[0];
+  } catch (error) {
+    console.error("Error finding user by ID:", error.message);
+    throw error;
+  }
+}
+
 module.exports = {
   saveUser,
   findUserByUsername,
+  findUserById
 };
