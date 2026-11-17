@@ -4,7 +4,12 @@ const path = require("node:path");
 const express = require("express");
 const session = require("express-session");
 const passport = require("passport");
+const LocalStrategy = require('passport-local').Strategy;
+const pool = require("./db/pool");
+
+//ROUTES
 const indexRouter = require("./routes/index");
+const userRouter = require("./routes/userRouter");
 
 const app = express();
 
@@ -14,11 +19,21 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
+
+const sessionStore = new (require("connect-pg-simple")(session))({
+  pool: pool,
+      createTableIfMissing: true,
+});
+
 app.use(
   session({
+    store: sessionStore,
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24, // 1 day
+    },
   }),
 );
 app.use(passport.initialize());
@@ -26,6 +41,7 @@ app.use(passport.session());
 
 
 app.use("/", indexRouter);
+app.use("/user", userRouter);
 
 app.use((req, res) => {
   res.status(404).send("Page not found");
