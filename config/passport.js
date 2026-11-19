@@ -1,6 +1,7 @@
 var passport = require('passport');
 var LocalStrategy = require('passport-local');
 const db = require('../db/queries');
+const bcrypt = require('bcryptjs');
 
 // verifyCallback is a function that will be called when a user attempts to log in. It checks the provided username and password against the database and calls done() with the appropriate user object or an error message.
 const verifyCallback = async (username, password, done) => {
@@ -11,7 +12,15 @@ const verifyCallback = async (username, password, done) => {
         if (!user) {
             return done(null, false, { message: "Incorrect username" });
         }
-        if (user.password !== password) {
+        // this is the old way of checking passwords, which is not secure. We should use bcrypt to compare the hashed password stored in the database with the provided password.
+        // if (user.password !== password) {
+        //     return done(null, false, { message: "Incorrect password" });
+        // }
+        // Use bcrypt to compare the provided password with the hashed password stored in the database
+  
+        const passwordMatch = await bcrypt.compare(password, user.password);
+
+        if (!passwordMatch) {
             return done(null, false, { message: "Incorrect password" });
         }
         return done(null, user);
@@ -34,6 +43,8 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser(async (id, done) => {
+        console.log("DESERIALIZE CALLED!");
+    console.log("USER ID:", id);
     try {
         const user = await db.findUserById(id);
         done(null, user);

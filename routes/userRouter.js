@@ -15,6 +15,23 @@ userRouter.post('/login', passport.authenticate("local", {
     failureMessage: true,
 }));
 
+userRouter.get('/logout', (req, res, next) => {
+    req.logout((err) => {
+        if (err) {
+            return next(err);
+        }
+        res.redirect('/');
+    });
+});
+
+userRouter.get("/member", (req, res) => {
+    res.render("member", { user: req.user });
+});
+
+userRouter.get("/users", userController.getAllUsers); // Assuming you have a method to get all users
+
+userRouter.post("/:id/delete", userController.deleteUserById);
+
 // userRouter.get('/logout', userController.logoutUser);
 
 module.exports = userRouter;

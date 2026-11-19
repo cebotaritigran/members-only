@@ -1,0 +1,119 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <a href="/" class="logo">Members Only</a>
+
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/user/logout">Log out</a>
+        </div>
+    </nav>
+
+    <main class="container">
+
+        <% if (user && user.admin_status === true) { %>
+
+            <section class="admin-header">
+                <div>
+                    <h1>User Management</h1>
+                    <p>Manage registered users and their membership privileges.</p>
+                </div>
+
+                <span class="user-count">
+                    <%= users.length %> users
+                </span>
+            </section>
+
+            <section class="users-container">
+
+                <% if (users.length > 0) { %>
+
+                    <table class="users-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Username</th>
+                                <th>Member</th>
+                                <th>Admin</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <% users.forEach(account => { %>
+                                <tr>
+                                    <td>#<%= account.id %></td>
+
+                                    <td class="username-cell">
+                                        <%= account.username %>
+                                    </td>
+
+                                    <td>
+                                        <% if (account.member_status) { %>
+                                            <span class="status active">Member</span>
+                                        <% } else { %>
+                                            <span class="status inactive">Not a member</span>
+                                        <% } %>
+                                    </td>
+
+                                    <td>
+                                        <% if (account.admin_status) { %>
+                                            <span class="status admin">Admin</span>
+                                        <% } else { %>
+                                            <span class="status inactive">No</span>
+                                        <% } %>
+                                    </td>
+
+                                    <td>
+                                        <% if (account.id !== user.id) { %>
+                                            <form
+                                                action="/user/<%= account.id %>/delete"
+                                                method="POST"
+                                                onsubmit="return confirm('Are you sure you want to delete this user?');"
+                                            >
+                                                <button type="submit" class="delete-button">
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        <% } else { %>
+                                            <span class="you-label">You</span>
+                                        <% } %>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+
+                <% } else { %>
+
+                    <p class="empty-users">No users found.</p>
+
+                <% } %>
+
+            </section>
+
+        <% } else { %>
+
+            <section class="access-denied">
+                <h1>Access Denied</h1>
+                <p>You don't have permission to access this page.</p>
+                <a href="/">Return home</a>
+            </section>
+
+        <% } %>
+
+    </main>
+
+</body>
+</html>

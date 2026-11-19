@@ -1,6 +1,14 @@
-require("dotenv").config();
-
 const path = require("node:path");
+const dotenv = require("dotenv");
+
+const result = dotenv.config({
+    path: path.join(__dirname, ".env")
+});
+
+
+
+
+
 const express = require("express");
 const session = require("express-session");
 const passport = require("passport");
@@ -51,17 +59,16 @@ app.use(passport.session());
 
 // Routes 
 app.use("/", indexRouter);
-app.get("/check", (req, res) => {
-  res.render("authPage", { user: req.user });
-});
-app.get("/log-out", (req, res, next) => {
-  req.logout((err) => {
-    if (err) {
-      return next(err);
-    }
-    res.redirect("/");
-  });
-});
+
+// app.get("/log-out", (req, res, next) => {
+//   req.logout((err) => {
+//     if (err) {
+//       return next(err);
+//     }
+//     res.redirect("/");
+//   });
+// });
+
 app.use("/user", userRouter);
 
 app.use((req, res) => {

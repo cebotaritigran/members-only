@@ -1,26 +1,162 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title><%= title %></title>
-    <link rel="stylesheet" href="/css/style.css" />
-  </head>
-  <body>
-    <main>
-      <h1><%= title %></h1>
-      <p>Welcome to the Members Only app!</p>
-      <form action="/user/login" method="post">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required />
-        <br />
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required />
-        <br />
-        <button type="submit">Login</button>
-      </form>
-      <p>Don't have an account? <a href="/user/sign-up">Sign up here</a>.</p>
-      <p>Or <a href="/user/logout">Logout</a> if you are already logged in.</p>
-    </main>
-  </body>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>
+    <%= title %>
+  </title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+
+<body>
+
+  <nav class="navbar">
+    <a href="/" class="logo">Members Only</a>
+
+    <div class="nav-links">
+      <% if (user) { %>
+        <span>Welcome, <%= user.username %></span>
+        <a href="/user/logout">Log out</a>
+        <a href="/user/member">My Account</a>
+        <% if (user.admin_status) { %>
+          <a href="/user/users">User Management</a>
+        <% } %>
+      <% } else { %>
+        <a href="/user/sign-up">Sign up</a>
+      <% } %>
+    </div>
+  </nav>
+
+  <main class="container">
+
+    <section class="hero">
+      <h1>Welcome to Members Only</h1>
+
+      <% if (user) { %>
+
+        <p class="welcome-text">
+          Welcome back, <strong><%= user.username %></strong>.
+          You're logged in and can participate in the community.
+        </p>
+
+        <form action="/message/create" method="post" class="message-form">
+          <label for="message">Share something with the community</label>
+
+          <div class="message-input">
+            <input
+              type="text"
+              id="message"
+              name="message"
+              placeholder="Write a message..."
+              required
+            />
+            <button type="submit">Post message</button>
+          </div>
+        </form>
+
+      <% } else { %>
+
+        <p class="welcome-text">
+          A private community where members can share messages and
+          connect with each other.
+        </p>
+
+        <div class="hero-buttons">
+          <a href="/user/sign-up" class="button">Create an account</a>
+          <a href="#login" class="button secondary">Log in</a>
+        </div>
+
+      <% } %>
+    </section>
+
+
+    <section class="messages-section">
+
+      <div class="section-header">
+        <h2>Community Messages</h2>
+        <span><%= messages.length %> messages</span>
+      </div>
+
+      <% if (messages.length > 0) { %>
+
+        <div class="messages">
+
+          <% messages.forEach(message => { %>
+
+            <article class="message-card">
+
+              <div class="message-header">
+                <strong>
+                  <%= message.user.username %>
+                </strong>
+              </div>
+
+              <p>
+                <%= message.content %>
+              </p>
+
+            </article>
+
+          <% }) %>
+
+        </div>
+
+      <% } else { %>
+
+        <div class="empty-messages">
+          <p>No messages yet. Be the first to post something!</p>
+        </div>
+
+      <% } %>
+
+    </section>
+
+
+    <% if (!user) { %>
+
+      <section class="login-section" id="login">
+
+        <h2>Member login</h2>
+
+        <form action="/user/login" method="post" class="login-form">
+
+          <div>
+            <label for="username">Username</label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              required
+            />
+          </div>
+
+          <div>
+            <label for="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              required
+            />
+          </div>
+
+          <button type="submit">Log in</button>
+
+        </form>
+
+        <p>
+          Don't have an account?
+          <a href="/user/sign-up">Create one here</a>.
+        </p>
+
+      </section>
+
+    <% } %>
+
+  </main>
+
+</body>
+
 </html>

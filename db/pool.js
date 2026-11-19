@@ -8,3 +8,25 @@ const pool = new Pool({
 
 module.exports = pool;
 
+/*
+DATABASE: members_only
+
+TABLE: users
+- id
+- username
+- password
+- membership_status
+- is_admin
+
+TABLE: messages
+- id
+- title
+- text
+- timestamp
+- user_id
+
+TABLE: session (Express sessions)
+- sid
+- sess
+- expire
+*/
